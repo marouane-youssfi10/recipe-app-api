@@ -5,10 +5,18 @@ from django.urls import reverse
 from rest_framework import test, status
 from rest_framework.test import APIClient
 
-from app.core.models import Recipe
+from app.core.models import Recipe, Tag, Ingredient
 from app.recipe.serializers import RecipeSerializer
 
 RECIPES_URL = reverse('recipe:recipe-list')
+
+def sample_tag(user, name='Main course'):
+    """Create and return a sample tag"""
+    return Tag.objects.create(user=user, name=name)
+
+def sample_ingredient(user, name='Cinnamon'):
+    """Create and return a sample ingredient"""
+    return Ingredient.objects.create(user=user, name=name)
 
 def sample_recipe(user, **params):
     """Create and return a sample recipe"""
@@ -68,4 +76,3 @@ class PrivateRecipeApiTests(TestCase):
         serializer = RecipeSerializer(recipes, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data), 1)
-        self.assertEqual(res.data, serializer.data)
