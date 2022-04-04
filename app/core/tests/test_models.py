@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-from ..models import Tag, Ingredient
+from ..models import Tag, Ingredient, Recipe
 
 
 def sample_user(email='test@gmail.com', password='testpass'):
@@ -56,3 +56,13 @@ class ModelTests(TestCase):
             name='Customer'
         )
         self.assertEqual(str(ingredient), ingredient.name)
+
+    def test_recipe_str(self):
+        """Test the recipe string representation"""
+        recipe = Recipe.objects.create(
+            user=sample_user(),
+            title='Steak and mushroom sauce',
+            time_miniutes=5,
+            price=5.00
+        )
+        self.assertEqual(str(recipe), recipe.title)
