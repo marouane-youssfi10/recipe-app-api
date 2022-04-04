@@ -46,6 +46,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def _params_to_ints(self, qs):
         """Convert a list of string IDs to a list of integers"""
+        # string = '1,2,3' to string_list = ['1', '2', '3']
         return [int(str_id) for str_id in qs.split(',')]
 
     def get_queryset(self):
