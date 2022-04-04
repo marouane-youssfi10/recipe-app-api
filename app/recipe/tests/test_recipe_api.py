@@ -42,3 +42,30 @@ class PrivateRecipeApiTests(TestCase):
         )
         self.client.force_authenticate(self.user)
 
+    def test_retrieve_recipes(self):
+        """Test retrieving a list recipes"""
+        sample_recipe(user=self.user)
+        sample_recipe(user=self.user)
+
+        res = self.client.get(RECIPES_URL)
+        recipes = Recipe.objects.all().order_by('-id')
+        serializer = RecipeSerializer(recipes, many=True)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, serializer.data)
+
+    def test_recipes_limited_to_user(self):
+        """Test retrieving recipes for user"""
+        user2 = get_user_model().objects.create_user(
+            'other@gmail.com',
+            'password123'
+        )
+        sample_recipe(user=user2)
+        sample_recipe(user=self.user)
+
+        res = self.client.get(RECIPES_URL)
+
+        recipes = Recipe.objects.filter(user=self.user)
+        serializer = RecipeSerializer(recipes, many=True)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data), 1)
+        self.assertEqual(res.data, serializer.data)
